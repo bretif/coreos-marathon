@@ -5,13 +5,14 @@ require 'fileutils'
 
 Vagrant.require_version ">= 1.6.0"
 
-MASTER_CLOUD_CONFIG = File.join(File.dirname(__FILE__), "master-user-data")
-SLAVE_CLOUD_CONFIG = File.join(File.dirname(__FILE__), "slave-user-data")
+CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "user-data")
 CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
 # Defaults for config options defined in CONFIG
 $num_instances = 1
 $instance_name_prefix = "core"
+$update_channel = "alpha"
+$image_version = "current"
 $enable_serial_logging = false
 $share_home = false
 $vm_gui = false
@@ -48,12 +49,14 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
   config.vm.box = "coreos-%s" % $update_channel
-  config.vm.box_version = ">= 308.0.1"
-  config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % $update_channel
+  if $image_version != "current"
+      config.vm.box_version = $image_version
+  end
+  config.vm.box_url = "https://storage.googleapis.com/%s.release.core-os.net/amd64-usr/%s/coreos_production_vagrant.json" % [$update_channel, $image_version]
 
   ["vmware_fusion", "vmware_workstation"].each do |vmware|
     config.vm.provider vmware do |v, override|
-      override.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant_vmware_fusion.json" % $update_channel
+      override.vm.box_url = "https://storage.googleapis.com/%s.release.core-os.net/amd64-usr/%s/coreos_production_vagrant_vmware_fusion.json" % [$update_channel, $image_version]
     end
   end
 
@@ -130,16 +133,11 @@ Vagrant.configure("2") do |config|
         config.vm.synced_folder ENV['HOME'], ENV['HOME'], id: "home", :nfs => true, :mount_options => ['nolock,vers=3,udp']
       end
 
-      if i == 1
-        cloud_config = MASTER_CLOUD_CONFIG
-      else
-        cloud_config = SLAVE_CLOUD_CONFIG
-      end
-
-      if File.exist?(cloud_config)
-        config.vm.provision :file, :source => "#{cloud_config}", :destination => "/tmp/vagrantfile-user-data"
+      if File.exist?(CLOUD_CONFIG_PATH)
+        config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
         config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
       end
+
     end
   end
 end
