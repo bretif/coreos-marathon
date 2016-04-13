@@ -1,10 +1,10 @@
-FROM alpine:3.2
-MAINTAINER Ross Fairbanks "ross@force12.io"
+FROM alpine:3.3
+MAINTAINER Bertrand RETIF <bretif@phosphore.eu>
 
-ENV FLEET_VERSION 0.11.5
+ENV FLEET_VERSION 0.11.7
 
 ENV BUILD_PACKAGES bash curl-dev ruby-dev build-base wget
-ENV RUBY_PACKAGES ruby
+ENV RUBY_PACKAGES ruby ruby-json
 
 # Install Ruby
 RUN apk update && \
