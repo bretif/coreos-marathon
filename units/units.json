@@ -1,10 +1,6 @@
 {
   "units": [
     {
-      "name": "consul.service",
-      "start": true
-    },
-    {
       "name": "registrator.service",
       "start": true
     },
