@@ -3,7 +3,7 @@
 ---
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/5782e35a02973bbe3def00e040ebad71
+    discovery: https://discovery.etcd.io/a95539467357c800b543015e2dd09c72
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
@@ -29,12 +29,12 @@ coreos:
       Type=oneshot
       ExecStartPre=-/usr/bin/docker kill bootstrap_cluster
       ExecStartPre=-/usr/bin/docker rm bootstrap_cluster
-      ExecStartPre=/usr/bin/docker pull quay.io/rossf7/coreos-marathon:latest
+      ExecStartPre=/usr/bin/docker pull bretif/coreos-marathon
       ExecStart=/usr/bin/docker run \
           --name=bootstrap_cluster \
           --net=host \
           -v /var/run/fleet.sock:/var/run/fleet.sock \
-          quay.io/rossf7/coreos-marathon:latest
+          bretif/coreos-marathon
       ExecStop=/usr/bin/docker stop bootstrap_cluster
 
       [Install]
