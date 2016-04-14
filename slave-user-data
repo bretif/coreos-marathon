@@ -3,10 +3,10 @@
 ---
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/a95539467357c800b543015e2dd09c72
+    discovery: https://discovery.etcd.io/071353fcd3ebaa70b9d7ecb6a823e952
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
-    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
+    listen-client-urls: http://0.0.0.0:2379
     listen-peer-urls: http://$private_ipv4:2380
   fleet:
     metadata: role=mesos-slave
