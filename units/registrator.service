@@ -15,8 +15,7 @@ ExecStart=/usr/bin/docker run --name registrator \
   --volume /var/run/docker.sock:/tmp/docker.sock \
   gliderlabs/registrator \
   --ip=${COREOS_PRIVATE_IPV4} \
-  etcd://${COREOS_PRIVATE_IPV4}:2379/myservices \
-  skydns2:///${COREOS_PRIVATE_IPV4}:2379/skydns.local
+  skydns2://${COREOS_PRIVATE_IPV4}:2379/skydns.local
 ExecStop=/usr/bin/docker stop registrator
 
 [Install]
