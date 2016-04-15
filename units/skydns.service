@@ -14,7 +14,7 @@ ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 ExecStart=/usr/bin/docker run --name skydns \
   --net==host \
   -p 53:53 \
-  -e ETCD_MACHINES=${COREOS_PRIVATE_IPV4}:4001
+  -e ETCD_MACHINES=${COREOS_PRIVATE_IPV4}:2379 \
   skynetservices/skydns \
 ExecStop=/usr/bin/docker stop skydns
 
