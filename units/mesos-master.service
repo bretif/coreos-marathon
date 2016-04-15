@@ -14,7 +14,6 @@ ExecStartPre=/usr/bin/docker pull mesosphere/mesos-master:0.28.0-2.0.16.ubuntu14
 ExecStart=/usr/bin/docker run \
   --name=mesos_master \
   --privileged \
-  --net=host \
   mesosphere/mesos-master:0.28.0-2.0.16.ubuntu1404 \
   --zk=zk://zookeeker.skydns.local:2181/mesos \
   --work_dir=/var/lib/mesos/master \

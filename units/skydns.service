@@ -1,7 +1,7 @@
 [Unit]
 Description=SkyDNS
-After=docker.service
-Requires=docker.service
+After=flanneld.service
+Requires=flanneld.service
 
 [Service]
 Restart=on-failure
@@ -12,7 +12,6 @@ ExecStartPre=-/usr/bin/docker kill skydns
 ExecStartPre=-/usr/bin/docker rm skydns
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 ExecStart=/usr/bin/docker run --name skydns \
-  --net==host \
   -p 53:53 \
   -e ETCD_MACHINES=${COREOS_PRIVATE_IPV4}:2379 \
   skynetservices/skydns \

@@ -1,7 +1,7 @@
 [Unit]
 Description=Zookeeper
-After=docker.service
-Requires=docker.service
+After=flanneld.service
+Requires=flanneld.service
 
 [Service]
 Restart=on-failure
