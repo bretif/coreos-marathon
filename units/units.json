@@ -1,6 +1,10 @@
 {
   "units": [
     {
+      "name": "skydns.service",
+      "start": true
+    },
+    {
       "name": "registrator.service",
       "start": true
     },

@@ -1,0 +1,25 @@
+[Unit]
+Description=SkyDNS
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=on-failure
+RestartSec=20
+TimeoutStartSec=0
+EnvironmentFile=-/etc/environment
+ExecStartPre=-/usr/bin/docker kill skydns
+ExecStartPre=-/usr/bin/docker rm skydns
+ExecStartPre=/usr/bin/docker pull skynetservices/skydns
+ExecStart=/usr/bin/docker run --name skydns \
+  --net==host \
+  -p 53:53 \
+  -e ETCD_MACHINES=${COREOS_PRIVATE_IPV4}:4001
+  skynetservices/skydns \
+ExecStop=/usr/bin/docker stop skydns
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+Global=true
