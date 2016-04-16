@@ -21,7 +21,7 @@ ExecStart=/usr/bin/docker run \
   mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404 \
   --ip=${COREOS_PRIVATE_IPV4} \
   --containerizers=docker \
-  --master=zk://zookeeper.skydns.local:2181/mesos \
+  --master=zk://zookeeper.zookeeper-2181.skydns.local:2181/mesos \
   --work_dir=/var/lib/mesos/slave \
   --log_dir=/var/log/mesos/slave
 ExecStop=/usr/bin/docker stop mesos_slave
