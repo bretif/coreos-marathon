@@ -1,5 +1,5 @@
 [Unit]
-Description=Registrator
+Description=Registrator - flannel network
 After=skydns.service
 Requires=skydns.service
 
@@ -14,7 +14,7 @@ ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
 ExecStart=/usr/bin/docker run --name registrator \
   --volume /var/run/docker.sock:/tmp/docker.sock \
   gliderlabs/registrator \
-  --ip=${COREOS_PRIVATE_IPV4} \
+  -internal \
   skydns2://${COREOS_PRIVATE_IPV4}:2379/skydns.local
 ExecStop=/usr/bin/docker stop registrator
 
