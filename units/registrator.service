@@ -12,6 +12,7 @@ ExecStartPre=-/usr/bin/docker kill registrator
 ExecStartPre=-/usr/bin/docker rm registrator
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
 ExecStart=/usr/bin/docker run --name registrator \
+  --net=host \
   --volume /var/run/docker.sock:/tmp/docker.sock \
   gliderlabs/registrator \
   -internal \

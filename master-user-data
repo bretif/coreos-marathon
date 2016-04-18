@@ -3,24 +3,27 @@
 ---
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/30494bc26d0bd0cb02701a75fffba97f
+    discovery: https://discovery.etcd.io/86d75cc1503dad559db61f854b2a7f01
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://$private_ipv4:2380
   fleet:
+    public-ip: "$public_ipv4"
     metadata: role=mesos-master
+  flannel:
+    interface: "$public_ipv4"
   units:
   - name: etcd2.service
     command: start
+  - name: fleet.service
+    command: start
   - name: flanneld.service
     drop-ins:
-      - name: 50-network-config.conf
-        content: |
-          [Service]
-          ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.99.0.0/16" }'
-    command: start
-  - name: fleet.service
+    - name: 50-network-config.conf
+      content: |
+        [Service]
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.99.0.0/16" }'
     command: start
   - name: coreos-marathon.service
     command: start
