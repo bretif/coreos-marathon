@@ -3,7 +3,7 @@
 ---
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/86d75cc1503dad559db61f854b2a7f01
+    discovery: https://discovery.etcd.io/831c27972ded2d2ecf9cb4d491deceff
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
@@ -16,7 +16,16 @@ coreos:
   units:
   - name: etcd2.service
     command: start
-  - name: flanneld.service
-    command: start
   - name: fleet.service
     command: start
+  - name: flanneld.service
+    command: start
+  - name: docker.service
+    drop-ins:
+    - name: 50-flannel.conf
+      content: |
+        [Unit]
+        Requires=flanneld.service
+        After=flanneld.service
+    command: start
+
