@@ -14,7 +14,7 @@ ExecStartPre=/usr/bin/docker pull mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu140
 ExecStart=/usr/bin/docker run \
   --name=mesos_slave \
   --privileged \
-  --dns=127.0.0.1:53 \
+  --net=host \
   -v /sys:/sys \
   -v /usr/bin/docker:/usr/bin/docker:ro \
   -v /var/run/docker.sock:/var/run/docker.sock \

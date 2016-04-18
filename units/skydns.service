@@ -11,7 +11,7 @@ EnvironmentFile=-/etc/environment
 ExecStartPre=-/usr/bin/docker kill skydns
 ExecStartPre=-/usr/bin/docker rm skydns
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
-ExecStartPre=/usr/bin/etcdctl set /skydns/config '{"dns_addr":"0.0.0.0:53","ttl":3600, "nameservers": ["8.8.8.8:53","8.8.4.4:53"]}'
+ExecStartPre=/usr/bin/etcdctl set /skydns/config '{"dns_addr":"0.0.0.0:53","ttl":600, "nameservers": ["8.8.8.8:53","8.8.4.4:53"]}'
 ExecStart=/usr/bin/docker run --name skydns \
   -p 53:53/udp -p 53:53/tcp \
   -e ETCD_MACHINES=http://${COREOS_PRIVATE_IPV4}:2379 \
