@@ -1,5 +1,5 @@
 [Unit]
-Description=Registrator - host network
+Description=Registrator internal - flannel network
 After=skydns.service
 Requires=skydns.service
 
@@ -8,17 +8,17 @@ Restart=on-failure
 RestartSec=20
 TimeoutStartSec=0
 EnvironmentFile=-/etc/environment
-ExecStartPre=-/usr/bin/docker kill registrator
-ExecStartPre=-/usr/bin/docker rm registrator
+ExecStartPre=-/usr/bin/docker kill registrator_internal
+ExecStartPre=-/usr/bin/docker rm registrator_internal
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
-ExecStart=/usr/bin/docker run --name registrator \
+ExecStart=/usr/bin/docker run --name registrator_internal \
   --volume /var/run/docker.sock:/tmp/docker.sock \
   -h ${HOSTNAME} \
   gliderlabs/registrator \
-  -ip=${COREOS_PUBLIC_IPV4} \
+  -internal \
   -ttl=30 \
   -ttl-refresh=20 \
-  skydns2://${COREOS_PRIVATE_IPV4}:2379/skydns.local
+  skydns2://${COREOS_PRIVATE_IPV4}:2379/skydns.local.internal
 ExecStop=/usr/bin/docker stop registrator
 
 [Install]

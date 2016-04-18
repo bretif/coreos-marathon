@@ -5,6 +5,10 @@
       "start": true
     },
     {
+      "name": "registrator-internal.service",
+      "start": true
+    },
+    {
       "name": "registrator.service",
       "start": true
     },
