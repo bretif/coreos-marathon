@@ -8,19 +8,20 @@ Restart=on-failure
 RestartSec=20
 TimeoutStartSec=0
 EnvironmentFile=-/etc/environment
+EnvironmentFile=/etc/skydns.environment
 ExecStartPre=-/usr/bin/docker kill skydns
 ExecStartPre=-/usr/bin/docker rm skydns
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
-ExecStartPre=/usr/bin/etcdctl set /skydns/config '{"dns_addr":"0.0.0.0:53","ttl":60, "nameservers": ["8.8.8.8:53","8.8.4.4:53"]}'
+ExecStartPre=/usr/bin/etcdctl set /skydns/config ${SKYDNS_CONFIG}
 ExecStart=/usr/bin/docker run --name skydns \
   -p 53:53/udp -p 53:53/tcp \
   -e SERVICE_ID=skydns \
   -e ETCD_MACHINES=http://${COREOS_PRIVATE_IPV4}:2379 \
-  skynetservices/skydns \
-ExecStartPost=/bin/bash -c "while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && [ -n "$IP" ]; do sleep 1; done; /bin/sed -i \"/search/a nameserver $(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)\" /etc/resolv.conf.skydns"
-ExecStopPost=/bin/bash -c "while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && [ -n "$IP" ]; do sleep 1; done; /bin/sed -i \"/search/d nameserver $(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)\" /etc/resolv.conf.skydns"
+  skynetservices/skydns
+ExecStartPost=/usr/local/bin/set_skydns_resolvconf.sh
 ExecStartPost=/bin/bash -c "ln -sf /etc/resolv.conf.skydns /etc/resolv.conf"
 ExecStopPost=/bin/bash -c "ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf"
+ExecStopPost=/usr/local/bin/unset_skydns_resolvconf.sh
 ExecStop=/usr/bin/docker stop skydns
 
 [Install]

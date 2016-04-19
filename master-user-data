@@ -11,22 +11,50 @@ write_files:
     nameserver $public_ipv4
     nameserver 8.8.8.8
     nameserver 8.8.4.4
-- path: /etc/profile.d/alias.sh
+- path: "/usr/local/bin/set_skydns_resolvconf.sh"
+  permissions: '0500'
+  owner: root
+  content: |
+    #!/bin/bash
+    while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && ! [ -n "$IP" ]; do
+      sleep 1;
+        echo "Wait IP of skydns container"
+    done
+    echo "Update /etc/resolv.conf.skydns with IP ${IP}"
+    /bin/sed -i "/search/a nameserver ${IP}" /etc/resolv.conf.skydns
+- path: "/usr/local/bin/unset_skydns_resolvconf.sh"
+  permissions: '0500'
+  owner: root
+  content: |
+    #!/bin/bash
+    IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)
+    echo "Remove IP ${IP} from /etc/resolv.conf.skydns"
+    /bin/sed -i "/nameserver ${IP}/d" /etc/resolv.conf.skydns
+- path: "/etc/skydns.environment"
+    permissions: '0644'
+    owner: root
     content: |
-      alias lal="ls -al"
-      alias ll="ls -l"
-      alias dk="docker "
-      alias dkps="dk ps"
-      alias dkm="dk images"
-      alias dki="dk inspect"
-      function dkip() { docker inspect --format "{{ .NetworkSettings.IPAddress }}" $1 ; }
-      function dkid() { docker inspect --format "{{ .ID }}" $1 ; }
-      function dkim() { docker inspect --format "{{ .Image }}" $1 ; }
-      function dkst() { docker inspect --format "{{ .State.Running }}" $1 ; }
-      function krit() { docker run -i -t $1 bash ; }
+        DOMAIN=skdemo.cloud
+        DOMAIN_PATH=/skydns/cloud/skdemo
+        SKYDNS_CONFIG='{"domain":"skdemo.cloud", "dns_addr":"0.0.0.0:53", "ttl":60, "nameservers": ["8.8.8.8:53","8.8.4.4:53"]}'
+- path: "/etc/profile.d/alias.sh"
+  permissions: '0644'
+  owner: root
+  content: |
+    alias lal="ls -al"
+    alias ll="ls -l"
+    alias dk="docker "
+    alias dkps="dk ps"
+    alias dkm="dk images"
+    alias dki="dk inspect"
+    function dkip() { docker inspect --format "{{ .NetworkSettings.IPAddress }}" $1 ; }
+    function dkid() { docker inspect --format "{{ .ID }}" $1 ; }
+    function dkim() { docker inspect --format "{{ .Image }}" $1 ; }
+    function dkst() { docker inspect --format "{{ .State.Running }}" $1 ; }
+    function dkit() { docker exec -it $1 bash ; }
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/736137c2ebf07526dd4646c107b28100
+    discovery: https://discovery.etcd.io/2c3a16c88f3624b47e6d8894b76b57fe
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001

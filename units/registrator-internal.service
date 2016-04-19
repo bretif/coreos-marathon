@@ -8,6 +8,7 @@ Restart=on-failure
 RestartSec=20
 TimeoutStartSec=0
 EnvironmentFile=-/etc/environment
+EnvironmentFile=/etc/skydns.environment
 ExecStartPre=-/usr/bin/docker kill registrator_internal
 ExecStartPre=-/usr/bin/docker rm registrator_internal
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
@@ -18,7 +19,7 @@ ExecStart=/usr/bin/docker run --name registrator_internal \
   -internal \
   -ttl=30 \
   -ttl-refresh=20 \
-  skydns2://${COREOS_PRIVATE_IPV4}:2379/internal.skydns.local
+  skydns2://${COREOS_PRIVATE_IPV4}:2379/internal.${DOMAIN}
 ExecStop=/usr/bin/docker stop registrator
 
 [Install]

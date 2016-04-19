@@ -4,6 +4,8 @@ After=registrator.service
 Requires=registrator.service
 
 [Service]
+EnvironmentFile=-/etc/environment
+EnvironmentFile=/etc/skydns.environment
 Restart=on-failure
 RestartSec=20
 TimeoutStartSec=0
@@ -17,8 +19,8 @@ ExecStart=/usr/bin/docker run \
   -p 8080:8080 \
   -p 9090:9090 \
   mesosphere/marathon:v1.1.0-RC1 \
-  --master zk://zookeeper-2181.skydns.local:2181/mesos \
-  --zk zk://zookeeper-2181.skydns.local:2181/marathon \
+  --master zk://zookeeper-2181.${DOMAIN}:2181/mesos \
+  --zk zk://zookeeper-2181.${DOMAIN}:2181/marathon \
   --task_launch_timeout 300000
 ExecStop=/usr/bin/docker stop marathon
 
