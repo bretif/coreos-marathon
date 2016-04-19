@@ -12,6 +12,7 @@ ExecStartPre=-/usr/bin/docker rm marathon
 ExecStartPre=/usr/bin/docker pull mesosphere/marathon:v1.1.0-RC1
 ExecStart=/usr/bin/docker run \
   --name marathon \
+  -e SERVICE_ID=marathon \
   -e LIBPROCESS_PORT=9090 \
   -p 8080:8080 \
   -p 9090:9090 \

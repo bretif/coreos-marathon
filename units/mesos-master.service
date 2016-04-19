@@ -13,6 +13,7 @@ ExecStartPre=-/usr/bin/docker rm mesos_master
 ExecStartPre=/usr/bin/docker pull mesosphere/mesos-master:0.28.0-2.0.16.ubuntu1404
 ExecStart=/usr/bin/docker run \
   --name=mesos_master \
+  -e SERVICE_ID=mesos_master \
   --net=host \
   --privileged \
   mesosphere/mesos-master:0.28.0-2.0.16.ubuntu1404 \
