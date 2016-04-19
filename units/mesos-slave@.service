@@ -13,15 +13,17 @@ ExecStartPre=-/usr/bin/docker rm mesos_slave
 ExecStartPre=/usr/bin/docker pull mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404
 ExecStart=/usr/bin/docker run \
   --name=mesos_slave \
+  -e SERVICE_ID=mesos_slave \
   --net=host \
   --privileged \
   -v /sys:/sys \
-  -v /usr/bin/docker:/usr/bin/docker:ro \
+  -v /cgroup:/cgroup \
+  -v /usr/bin/docker:/usr/local/bin/docker:ro \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /lib64/libdevmapper.so.1.02:/lib/libdevmapper.so.1.02:ro \
   mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404 \
   --ip=${COREOS_PUBLIC_IPV4} \
-  --containerizers=docker \
+  --containerizers=docker,mesos \
   --master=zk://zookeeper-2181.skydns.local:2181/mesos \
   --work_dir=/var/lib/mesos/slave \
   --log_dir=/var/log/mesos/slave
