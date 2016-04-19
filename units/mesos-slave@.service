@@ -13,8 +13,8 @@ ExecStartPre=-/usr/bin/docker rm mesos_slave
 ExecStartPre=/usr/bin/docker pull mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404
 ExecStart=/usr/bin/docker run \
   --name=mesos_slave \
-  --privileged \
   --net=host \
+  --privileged \
   -v /sys:/sys \
   -v /usr/bin/docker:/usr/bin/docker:ro \
   -v /var/run/docker.sock:/var/run/docker.sock \
