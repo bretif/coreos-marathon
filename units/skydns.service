@@ -17,7 +17,8 @@ ExecStart=/usr/bin/docker run --name skydns \
   -e SERVICE_ID=skydns \
   -e ETCD_MACHINES=http://${COREOS_PRIVATE_IPV4}:2379 \
   skynetservices/skydns \
-ExecStartPost=/bin/sed -i "/search/a nameserver $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' skydns)" /etc/resolv.conf.skydns
+ExecStartPost=/bin/bash -c "while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && [ -n "$IP" ]; do sleep 1; done; /bin/sed -i \"/search/a nameserver $(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)\" /etc/resolv.conf.skydns"
+ExecStopPost=/bin/bash -c "while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && [ -n "$IP" ]; do sleep 1; done; /bin/sed -i \"/search/d nameserver $(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)\" /etc/resolv.conf.skydns"
 ExecStartPost=/bin/bash -c "ln -sf /etc/resolv.conf.skydns /etc/resolv.conf"
 ExecStopPost=/bin/bash -c "ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf"
 ExecStop=/usr/bin/docker stop skydns
