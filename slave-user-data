@@ -6,8 +6,8 @@ write_files:
   permissions: '0644'
   owner: root
   content: |
-    domain docker.local
-    search docker.local internal.docker.local
+    domain skdemo.cloud
+    search skdemo.cloud internal.skdemo.cloud
     nameserver $public_ipv4
     nameserver 8.8.8.8
     nameserver 8.8.4.4
@@ -16,9 +16,11 @@ write_files:
   owner: root
   content: |
     #!/bin/bash
-    while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && ! [ -n "$IP" ]; do
+    IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)
+    while [ -z "${IP// }" ]; do
       sleep 1;
       echo "Wait IP of skydns container"
+      IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns)
     done
     echo "Update /etc/resolv.conf.skydns with IP ${IP}"
     /bin/sed -i "/search/a nameserver ${IP}" /etc/resolv.conf.skydns
@@ -54,7 +56,7 @@ write_files:
     function dkit() { docker exec -it $1 bash ; }
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/b85e6b051d6d9ff000fa24adf5f13419
+    discovery: https://discovery.etcd.io/6dffc9e40b0e08ef0284dcbfc8080778
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
