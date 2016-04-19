@@ -18,10 +18,10 @@ ExecStart=/usr/bin/docker run --name skydns \
   -e SERVICE_ID=skydns \
   -e ETCD_MACHINES=http://${COREOS_PRIVATE_IPV4}:2379 \
   skynetservices/skydns
-ExecStartPost=/usr/local/bin/set_skydns_resolvconf.sh
+ExecStartPost=/tools/set_skydns_resolvconf.sh
 ExecStartPost=/bin/bash -c "ln -sf /etc/resolv.conf.skydns /etc/resolv.conf"
 ExecStopPost=/bin/bash -c "ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf"
-ExecStopPost=/usr/local/bin/unset_skydns_resolvconf.sh
+ExecStopPost=/tools/unset_skydns_resolvconf.sh
 ExecStop=/usr/bin/docker stop skydns
 
 [Install]

@@ -11,18 +11,18 @@ write_files:
     nameserver $public_ipv4
     nameserver 8.8.8.8
     nameserver 8.8.4.4
-- path: "/usr/local/bin/set_skydns_resolvconf.sh"
+- path: "/tools/set_skydns_resolvconf.sh"
   permissions: '0500'
   owner: root
   content: |
     #!/bin/bash
     while ! IP=$(docker inspect -f '{{.NetworkSettings.IPAddress}}' skydns) && ! [ -n "$IP" ]; do
       sleep 1;
-        echo "Wait IP of skydns container"
-    done
+      echo "Wait IP of skydns container"
+      done
     echo "Update /etc/resolv.conf.skydns with IP ${IP}"
     /bin/sed -i "/search/a nameserver ${IP}" /etc/resolv.conf.skydns
-- path: "/usr/local/bin/unset_skydns_resolvconf.sh"
+- path: "/tools/unset_skydns_resolvconf.sh"
   permissions: '0500'
   owner: root
   content: |
@@ -31,12 +31,12 @@ write_files:
     echo "Remove IP ${IP} from /etc/resolv.conf.skydns"
     /bin/sed -i "/nameserver ${IP}/d" /etc/resolv.conf.skydns
 - path: "/etc/skydns.environment"
-    permissions: '0644'
-    owner: root
-    content: |
-        DOMAIN=skdemo.cloud
-        DOMAIN_PATH=/skydns/cloud/skdemo
-        SKYDNS_CONFIG='{"domain":"skdemo.cloud", "dns_addr":"0.0.0.0:53", "ttl":60, "nameservers": ["8.8.8.8:53","8.8.4.4:53"]}'
+  permissions: '0644'
+  owner: root
+  content: |
+    DOMAIN=skdemo.cloud
+    DOMAIN_PATH=/skydns/cloud/skdemo
+    SKYDNS_CONFIG='{"domain":"skdemo.cloud", "dns_addr":"0.0.0.0:53", "ttl":60, "nameservers": ["8.8.8.8:53","8.8.4.4:53"]}'
 - path: "/etc/profile.d/alias.sh"
   permissions: '0644'
   owner: root
@@ -54,7 +54,7 @@ write_files:
     function dkit() { docker exec -it $1 bash ; }
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/2c3a16c88f3624b47e6d8894b76b57fe
+    discovery: https://discovery.etcd.io/b85e6b051d6d9ff000fa24adf5f13419
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
