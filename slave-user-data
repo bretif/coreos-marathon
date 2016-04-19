@@ -1,9 +1,32 @@
 #cloud-config
 
 ---
+write_files:
+- path: "/etc/resolv.conf.skydns"
+  permissions: '0644'
+  owner: root
+  content: |
+    domain docker.local
+    search docker.local internal.docker.local
+    nameserver $public_ipv4
+    nameserver 8.8.8.8
+    nameserver 8.8.4.4
+- path: /etc/profile.d/alias.sh
+    content: |
+      alias lal="ls -al"
+      alias ll="ls -l"
+      alias dk="docker "
+      alias dkps="dk ps"
+      alias dkm="dk images"
+      alias dki="dk inspect"
+      function dkip() { docker inspect --format "{{ .NetworkSettings.IPAddress }}" $1 ; }
+      function dkid() { docker inspect --format "{{ .ID }}" $1 ; }
+      function dkim() { docker inspect --format "{{ .Image }}" $1 ; }
+      function dkst() { docker inspect --format "{{ .State.Running }}" $1 ; }
+      function krit() { docker run -i -t $1 bash ; }
 coreos:
   etcd2:
-    discovery: https://discovery.etcd.io/4b437243c69a362540b73a12fc9f747f
+    discovery: https://discovery.etcd.io/736137c2ebf07526dd4646c107b28100
     advertise-client-urls: http://$private_ipv4:2379
     initial-advertise-peer-urls: http://$private_ipv4:2380
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
@@ -19,6 +42,11 @@ coreos:
   - name: fleet.service
     command: start
   - name: flanneld.service
+    drop-ins:
+    - name: 50-network-config.conf
+      content: |
+        [Service]
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.99.0.0/16" }'
     command: start
   - name: docker.service
     drop-ins:
@@ -28,12 +56,3 @@ coreos:
         Requires=flanneld.service
         After=flanneld.service
     command: start
-write_files:
-  - path: "/etc/resolv.conf"
-    permissions: "0644"
-    owner: "root"
-    content: |
-      nameserver 127.0.0.1
-      nameserver 8.8.8.8
-      nameserver 8.8.4.4
-
