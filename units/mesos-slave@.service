@@ -18,17 +18,19 @@ ExecStart=/usr/bin/docker run \
   --privileged \
   -e SERVICE_ID=mesos_slave-%H \
   -v /sys:/sys \
-  -v /usr/bin/docker:/usr/local/bin/docker:ro \
+  -v /usr/bin/docker:/usr/bin/docker:ro \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /usr/lib64/libsystemd.so.0:/lib/libsystemd.so.0:ro \
   -v /usr/lib64/libdevmapper.so.1.02:/lib/libdevmapper.so.1.02:ro \
   -v /usr/lib64/libgcrypt.so.20:/lib/libgcrypt.so.20:ro \
   -e MESOS_IP=${COREOS_PUBLIC_IPV4} \
-  -e MESOS_HOSTNAME=%H \
+  -e MESOS_HOSTNAME_LOOKUP=false \
   -e MESOS_CONTAINERIZERS=docker,mesos \
   -e MESOS_MASTER=zk://zookeeper-2181.${DOMAIN}:2181/mesos \
   -e MESOS_WORK_DIR=/var/lib/mesos/slave \
   -e MESOS_LOG_DIR=/var/log/mesos/slave \
+  -e MESOS_EXECUTOR_REGISTRATION_TIMEOUT=10mins \
+  -e MESOS_DOCKER=/usr/bin/docker \
   -e MESOS_DOCKER_MESOS_IMAGE=mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404 \
   mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404
 ExecStop=/usr/bin/docker stop mesos_slave-%H

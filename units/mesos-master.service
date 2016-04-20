@@ -18,6 +18,7 @@ ExecStart=/usr/bin/docker run \
   --privileged \
   -e SERVICE_ID=mesos_master-%H \
   -e MESOS_IP=${COREOS_PUBLIC_IPV4} \
+  -e MESOS_HOSTNAME_LOOKUP=false \
   -e MESOS_ZK=zk://zookeeper-2181.${DOMAIN}:2181/mesos \
   -e MESOS_PORT=5050 \
   -e MESOS_QUORUM=1 \
