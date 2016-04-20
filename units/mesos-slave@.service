@@ -13,22 +13,24 @@ ExecStartPre=-/usr/bin/docker kill mesos_slave
 ExecStartPre=-/usr/bin/docker rm mesos_slave
 ExecStartPre=/usr/bin/docker pull mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404
 ExecStart=/usr/bin/docker run \
-  --name=mesos_slave \
-  -e SERVICE_ID=mesos_slave \
+  --name=mesos_slave-$(hostname) \
   --net=host \
   --privileged \
+  -e SERVICE_ID=mesos_slave-$(hostname) \
   -v /sys:/sys \
   -v /usr/bin/docker:/usr/local/bin/docker:ro \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /usr/lib64/libsystemd.so.0:/lib/libsystemd.so.0:ro \
   -v /usr/lib64/libdevmapper.so.1.02:/lib/libdevmapper.so.1.02:ro \
   -v /usr/lib64/libgcrypt.so.20:/lib/libgcrypt.so.20:ro \
-  mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404 \
-  --ip=${COREOS_PUBLIC_IPV4} \
-  --containerizers=docker,mesos \
-  --master=zk://zookeeper-2181.${DOMAIN}:2181/mesos \
-  --work_dir=/var/lib/mesos/slave \
-  --log_dir=/var/log/mesos/slave
+  -e MESOS_IP=${COREOS_PUBLIC_IPV4} \
+  -e MESOS_HOSTNAME=$(hostname) \
+  -e MESOS_CONTAINERIZERS=docker,mesos \
+  -e MESOS_MASTER=zk://zookeeper-2181.${DOMAIN}:2181/mesos \
+  -e MESOS_WORK_DIR=/var/lib/mesos/slave \
+  -e MESOS_LOG_DIR=/var/log/mesos/slave \
+  -e MESOS_DOCKER_MESOS_IMAGE=mesosphere/mesos-slave \
+  mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404
 ExecStop=/usr/bin/docker stop mesos_slave
 
 [Install]
