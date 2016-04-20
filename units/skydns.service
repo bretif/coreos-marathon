@@ -13,16 +13,16 @@ ExecStartPre=-/usr/bin/docker kill skydns
 ExecStartPre=-/usr/bin/docker rm skydns
 ExecStartPre=/usr/bin/docker pull skynetservices/skydns
 ExecStartPre=/usr/bin/etcdctl set /skydns/config ${SKYDNS_CONFIG}
-ExecStart=/usr/bin/docker run --name skydns \
+ExecStart=/usr/bin/docker run --name skydns-%H \
   -p 53:53/udp -p 53:53/tcp \
-  -e SERVICE_ID=skydns \
+  -e SERVICE_ID=skydns-%H \
   -e ETCD_MACHINES=http://${COREOS_PRIVATE_IPV4}:2379 \
   skynetservices/skydns
 ExecStartPost=/tools/set_skydns_resolvconf.sh
 ExecStartPost=/bin/bash -c "ln -sf /etc/resolv.conf.skydns /etc/resolv.conf"
 ExecStopPost=/bin/bash -c "ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf"
 ExecStopPost=/tools/unset_skydns_resolvconf.sh
-ExecStop=/usr/bin/docker stop skydns
+ExecStop=/usr/bin/docker stop skydns-%H
 
 [Install]
 WantedBy=multi-user.target

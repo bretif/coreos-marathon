@@ -13,8 +13,8 @@ ExecStartPre=-/usr/bin/docker kill marathon
 ExecStartPre=-/usr/bin/docker rm marathon
 ExecStartPre=/usr/bin/docker pull mesosphere/marathon:v1.1.0-RC1
 ExecStart=/usr/bin/docker run \
-  --name marathon \
-  -e SERVICE_ID=marathon \
+  --name marathon-%H \
+  -e SERVICE_ID=marathon-%H \
   -e LIBPROCESS_PORT=9090 \
   -p 8080:8080 \
   -p 9090:9090 \
@@ -22,7 +22,7 @@ ExecStart=/usr/bin/docker run \
   --master zk://zookeeper-2181.${DOMAIN}:2181/mesos \
   --zk zk://zookeeper-2181.${DOMAIN}:2181/marathon \
   --task_launch_timeout 300000
-ExecStop=/usr/bin/docker stop marathon
+ExecStop=/usr/bin/docker stop marathon-%H
 
 [Install]
 WantedBy=multi-user.target

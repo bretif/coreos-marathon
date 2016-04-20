@@ -24,7 +24,7 @@ ExecStart=/usr/bin/docker run \
   -e MESOS_WORK_DIR=/var/lib/mesos/master \
   -e MESOS_LOG_DIR=/var/log/mesos/master \
   mesosphere/mesos-master:0.28.0-2.0.16.ubuntu1404
-ExecStop=/usr/bin/docker stop mesos_master
+ExecStop=/usr/bin/docker stop mesos_master-%H
 
 [Install]
 WantedBy=multi-user.target

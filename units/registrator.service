@@ -12,7 +12,8 @@ EnvironmentFile=/etc/skydns.environment
 ExecStartPre=-/usr/bin/docker kill registrator
 ExecStartPre=-/usr/bin/docker rm registrator
 ExecStartPre=/usr/bin/docker pull gliderlabs/registrator
-ExecStart=/usr/bin/docker run --name registrator \
+ExecStart=/usr/bin/docker run --name registrator-%H \
+  -e SERVICE_ID=registrator-%H \
   --volume /var/run/docker.sock:/tmp/docker.sock \
   -h ${HOSTNAME} \
   gliderlabs/registrator \
@@ -20,7 +21,7 @@ ExecStart=/usr/bin/docker run --name registrator \
   -ttl=30 \
   -ttl-refresh=20 \
   skydns2://${COREOS_PRIVATE_IPV4}:2379/${DOMAIN}
-ExecStop=/usr/bin/docker stop registrator
+ExecStop=/usr/bin/docker stop registrator-%H
 
 [Install]
 WantedBy=multi-user.target

@@ -31,7 +31,7 @@ ExecStart=/usr/bin/docker run \
   -e MESOS_LOG_DIR=/var/log/mesos/slave \
   -e MESOS_DOCKER_MESOS_IMAGE=mesosphere/mesos-slave \
   mesosphere/mesos-slave:0.28.0-2.0.16.ubuntu1404
-ExecStop=/usr/bin/docker stop mesos_slave
+ExecStop=/usr/bin/docker stop mesos_slave-%H
 
 [Install]
 WantedBy=multi-user.target
