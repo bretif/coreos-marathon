@@ -21,7 +21,7 @@ ExecStart=/usr/bin/docker run \
   -e MARATHON_MASTER=zk://zookeeper-2181.${DOMAIN}:2181/mesos \
   -e MARATHON_ZK=zk://zookeeper-2181.${DOMAIN}:2181/marathon \
   -e MARATHON_TASK_LAUNCH_TIMEOUT=600000 \
-  mesosphere/marathon:v1.1.0-RC1 \
+  mesosphere/marathon:v1.1.0-RC1
 ExecStop=/usr/bin/docker stop marathon-%H
 
 [Install]
