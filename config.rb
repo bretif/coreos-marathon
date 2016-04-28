@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'yaml'
 
-# Size of the CoreOS cluster created by Vagrant
+## Size of the CoreOS cluster created by Vagrant
 $num_instances=3
 
 # Used to fetch a new discovery token for a cluster of size $num_instances
